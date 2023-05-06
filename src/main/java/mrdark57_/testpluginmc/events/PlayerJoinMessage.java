@@ -1,4 +1,4 @@
-package mc.plugin.testpluginmc.events;
+package mrdark57_.testpluginmc.events;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;

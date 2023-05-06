@@ -1,6 +1,6 @@
 name: TestPluginMC
 version: 1.1
-main: mc.plugin.testpluginmc.TestPluginMC
+main: mrdark57_.testpluginmc.TestPluginMC
 commands:
   kit:
     description: Give a kit

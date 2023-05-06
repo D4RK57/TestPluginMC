@@ -1,4 +1,4 @@
-package mc.plugin.testpluginmc.commands;
+package mrdark57_.testpluginmc.commands;
 
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -30,7 +30,7 @@ public class Kit implements CommandExecutor {
             // Añadir los items al inventario del jugador
             player.getInventory().addItem(diamond, gold);
 
-            player.sendMessage("You has received the kit successfully!");
+            player.sendMessage("You has received the kit successfully!)");
         }
 
         // Si se usa el comando correctamente devuelve un true
