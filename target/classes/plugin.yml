@@ -1,8 +1,12 @@
 name: TestPluginMC
 version: 1.1
+author: MrDark57_
 main: mrdark57_.testpluginmc.TestPluginMC
 commands:
   kit:
     description: Give a kit
     usage: /<command>
 #   permission: testpluginmc.kit
+  testplugin:
+    description: The main command
+    usage: /<command>
