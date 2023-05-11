@@ -24,8 +24,11 @@ public class PlayerJoin implements Listener {
         Player player = event.getPlayer();
         FileConfiguration config = plugin.getConfig();
 
-        if (config.getString("Config.welcome-msg").equals("true")){
-            player.sendMessage(ChatColor.AQUA + "Welcome " + event.getPlayer().getName() + " to the server!");
+        String welcomeMsgPath = "Config.welcome-msg";
+
+        if (config.getString(welcomeMsgPath).equals("true")){
+            String welcomeMsgTextPath = "Config.welcome-msg-txt";
+            player.sendMessage(config.getString(welcomeMsgTextPath));
         }
 
     }

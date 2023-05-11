@@ -1,2 +1,3 @@
 Config:
   welcome-msg: true
+  welcome-msg-txt: "Welcome to the server!"

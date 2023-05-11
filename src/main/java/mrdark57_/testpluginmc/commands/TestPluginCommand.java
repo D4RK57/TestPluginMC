@@ -28,11 +28,19 @@ public class TestPluginCommand implements CommandExecutor {
             if (args.length > 0){
 
                 if (args[0].equalsIgnoreCase("help")){
-                    player.sendMessage(pluginName + "Use /testplugin version to see the plugin version.");
+                    player.sendMessage(pluginName
+                            + " Commands: \n"
+                            + "Use /testplugin version to see the plugin version. \n"
+                            + "Use /testplugin reload to reload the plugin.");
                     return true;
 
                 }else if (args[0].equalsIgnoreCase("version")){
                     player.sendMessage(pluginName + " The current version is " + pluginVersion);
+                    return true;
+
+                }else if (args[0].equalsIgnoreCase("reload")){
+                    plugin.reloadConfig();
+                    player.sendMessage(pluginName + " The plugin has been reloaded successfully!");
                     return true;
 
                 }else{
@@ -41,7 +49,7 @@ public class TestPluginCommand implements CommandExecutor {
                 }
 
             }else{
-                player.sendMessage(pluginName + ChatColor.RED+ " Use /testplugin help to see the plugin commands.");
+                player.sendMessage(pluginName + ChatColor.RED + " Use /testplugin help to see the plugin commands.");
                 return true;
             }
 
