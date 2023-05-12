@@ -6,6 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 public class TestPluginCommand implements CommandExecutor {
@@ -21,6 +22,7 @@ public class TestPluginCommand implements CommandExecutor {
 
         String pluginName = plugin.getPluginName();
         String pluginVersion = plugin.getPluginVersion();
+        FileConfiguration config = plugin.getConfig();
 
         if (sender instanceof Player) {
             Player player = (Player) sender;
@@ -31,7 +33,8 @@ public class TestPluginCommand implements CommandExecutor {
                     player.sendMessage(pluginName
                             + " Commands: \n"
                             + "Use /testplugin version to see the plugin version. \n"
-                            + "Use /testplugin reload to reload the plugin.");
+                            + "Use /testplugin reload to reload the plugin. \n"
+                            + "Use /testplugin kills to know how many zombies are you killed.");
                     return true;
 
                 }else if (args[0].equalsIgnoreCase("version")){
@@ -42,6 +45,25 @@ public class TestPluginCommand implements CommandExecutor {
                     plugin.reloadConfig();
                     player.sendMessage(pluginName + " The plugin has been reloaded successfully!");
                     return true;
+
+                }else if (args[0].equalsIgnoreCase("kills")){
+
+                    String zombieKillsNumberPath = "Players." + player.getUniqueId() + ".zombieKills";
+
+                    if (!config.contains("Players")){
+                        // El jugador aún no ha matado zombies
+                        player.sendMessage(pluginName + ChatColor.DARK_RED + " You aren´t killed zombies yet.");
+                        return true;
+                    }else if (config.contains(zombieKillsNumberPath)){
+                        int zombiesKilled = Integer.parseInt(config.getString(zombieKillsNumberPath));
+                        player.sendMessage(pluginName + ChatColor.RED + " KILLS:");
+                        player.sendMessage(ChatColor.GREEN + "Zombie: " + ChatColor.YELLOW +zombiesKilled);
+                        return true;
+                    }else {
+                        // El jugador aún no ha matado zombies
+                        player.sendMessage(pluginName + ChatColor.DARK_RED + " You aren´t killed zombies yet.");
+                        return true;
+                    }
 
                 }else{
                     player.sendMessage(pluginName + ChatColor.RED + " That command does not exist.");

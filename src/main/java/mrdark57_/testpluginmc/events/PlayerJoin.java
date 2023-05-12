@@ -28,7 +28,9 @@ public class PlayerJoin implements Listener {
 
         if (config.getString(welcomeMsgPath).equals("true")){
             String welcomeMsgTextPath = "Config.welcome-msg-txt";
-            player.sendMessage(config.getString(welcomeMsgTextPath));
+            // Se utiliza el método translateAlternateColorCodes para activar los códigos de colores &
+            player.sendMessage(ChatColor.translateAlternateColorCodes(
+                    '&', config.getString(welcomeMsgTextPath)).replaceAll("%player%", player.getName()));
         }
 
     }

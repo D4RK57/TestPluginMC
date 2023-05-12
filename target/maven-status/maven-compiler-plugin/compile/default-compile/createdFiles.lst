@@ -1,4 +1,5 @@
-mrdark57_\testpluginmc\commands\Kit.class
+mrdark57_\testpluginmc\events\ZombieKills.class
 mrdark57_\testpluginmc\TestPluginMC.class
-mrdark57_\testpluginmc\events\PlayerJoin.class
 mrdark57_\testpluginmc\commands\TestPluginCommand.class
+mrdark57_\testpluginmc\commands\Kit.class
+mrdark57_\testpluginmc\events\PlayerJoin.class
