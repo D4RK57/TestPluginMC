@@ -36,6 +36,7 @@ public class ZombieKills implements Listener {
             config.set(killerNamePath, killer.getName());
 
             if (config.contains(zombieKillsNumberPath)){
+
                 int zombiesKilled = Integer.parseInt(config.getString(zombieKillsNumberPath));
                 int counter = zombiesKilled + 1;
 

@@ -8,6 +8,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import java.util.List;
+
 public class PlayerJoin implements Listener {
 
     // Cuando ocurre el evento PlayerJoinEvent (jugador entra al servidor) envía un mensaje
@@ -26,11 +28,18 @@ public class PlayerJoin implements Listener {
 
         String welcomeMsgPath = "Config.welcome-msg";
 
+
         if (config.getString(welcomeMsgPath).equals("true")){
+
             String welcomeMsgTextPath = "Config.welcome-msg-txt";
+            // Ejemplo de como extraer una lista de la config
+            List<String> welcomeMessages = config.getStringList(welcomeMsgTextPath);
+
             // Se utiliza el método translateAlternateColorCodes para activar los códigos de colores &
-            player.sendMessage(ChatColor.translateAlternateColorCodes(
-                    '&', config.getString(welcomeMsgTextPath)).replaceAll("%player%", player.getName()));
+            for (String message: welcomeMessages) {
+                player.sendMessage(ChatColor.translateAlternateColorCodes(
+                        '&', message).replaceAll("%player%", player.getName()));
+            }
         }
 
     }
