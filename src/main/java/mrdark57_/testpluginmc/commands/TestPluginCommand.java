@@ -9,6 +9,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TestPluginCommand implements CommandExecutor {
 
     private TestPluginMC plugin;
@@ -52,7 +55,7 @@ public class TestPluginCommand implements CommandExecutor {
 
                     if (!config.contains("Players")){
                         // El jugador aún no ha matado zombies
-                        player.sendMessage(pluginName + ChatColor.DARK_RED + " You aren´t killed zombies yet.");
+                        player.sendMessage(pluginName + ChatColor.DARK_RED + " You are not killed zombies yet.");
                         return true;
                     }else if (config.contains(zombieKillsNumberPath)){
                         int zombiesKilled = Integer.parseInt(config.getString(zombieKillsNumberPath));
@@ -63,6 +66,48 @@ public class TestPluginCommand implements CommandExecutor {
                         // El jugador aún no ha matado zombies
                         player.sendMessage(pluginName + ChatColor.DARK_RED + " You aren´t killed zombies yet.");
                         return true;
+                    }
+
+                }else if (args[0].equalsIgnoreCase("report")){
+                    //testplugin report [usuario]
+                    // Ejemplo para añadir una lista de usuarios a la config
+                    if (args.length == 1){
+                        player.sendMessage(pluginName + ChatColor.RED + " To report a player use: /testplugin report [user]");
+                        return true;
+
+                    }else {
+                        String user = args[1];
+                        String reportedUsersPath = "Config.reported-users";
+
+                        if (Bukkit.getPlayer(user) != null){
+
+                            if (config.contains(reportedUsersPath)){
+                                List<String> reportedUsers = config.getStringList(reportedUsersPath);
+
+                                if (reportedUsers.contains(user)){
+                                    player.sendMessage(pluginName + ChatColor.RED + " " + user + " is already reported!");
+                                    return true;
+                                }else {
+                                    reportedUsers.add(user);
+                                    config.set(reportedUsersPath, reportedUsers);
+                                    plugin.saveConfig();
+                                    player.sendMessage(pluginName + ChatColor.GREEN + " " + user + " has been reported successfully!");
+                                    return true;
+                                }
+
+                            }else {
+                                List<String> reportedUsers = new ArrayList<>();
+                                reportedUsers.add(user);
+                                config.set(reportedUsersPath, reportedUsers);
+                                plugin.saveConfig();
+                                player.sendMessage(pluginName + ChatColor.GREEN + " " + user + " has been reported successfully!");
+                                return true;
+                            }
+
+                        }else {
+                            player.sendMessage(pluginName + ChatColor.RED + " This player is not online.");
+                            return true;
+                        }
                     }
 
                 }else{
@@ -80,4 +125,5 @@ public class TestPluginCommand implements CommandExecutor {
             return false;
         }
     }
+
 }
