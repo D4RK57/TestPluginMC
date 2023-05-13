@@ -4,3 +4,4 @@ mrdark57_\testpluginmc\utils\ColorTranslator.class
 mrdark57_\testpluginmc\commands\TestPluginCommand.class
 mrdark57_\testpluginmc\commands\Kit.class
 mrdark57_\testpluginmc\events\PlayerJoin.class
+mrdark57_\testpluginmc\events\Inventory.class

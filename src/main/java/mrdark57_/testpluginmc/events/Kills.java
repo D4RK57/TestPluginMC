@@ -30,13 +30,17 @@ public class Kills implements Listener {
         Player killer = event.getEntity().getKiller();
         EntityType entity = event.getEntityType();
         if (killer != null && killer.getType().equals(EntityType.PLAYER)){
-            killZombies(event, killer, entity);
-            killPlayer(event, killer, entity);
+
+            if (entity.equals(EntityType.ZOMBIE)){
+                killZombies(killer, entity);
+            } else if (entity.equals(EntityType.PLAYER)) {
+                killPlayer(killer, entity);
+            }
+
         }
     }
 
-    public void killPlayer(EntityDeathEvent event, Player killer, EntityType entity) {
-        if (entity.equals(EntityType.PLAYER)) {
+    public void killPlayer(Player killer, EntityType entity) {
             //ItemStack item = new ItemStack(id, amount, dataValue) -- Para compatibilidad con versiones antiguas (1.8)
             //ItemStack item = new ItemStack(nombre, amount) -- Para versiones nuevas
             ItemStack gem = new ItemStack(Material.EMERALD,1);
@@ -65,15 +69,13 @@ public class Kills implements Listener {
                 killer.sendMessage(plugin.getPluginName() + ChatColor.GREEN + " Great job! You has received a reward!");
             }
 
-        }
     }
 
-    public void killZombies(EntityDeathEvent event, Player killer, EntityType entity) {
-
+    public void killZombies(Player killer, EntityType entity) {
         // killer no puede ser el sol por ejemplo, debe ser una entidad
         // killer debe ser un jugador
         // entity debe ser un zombie
-        if (entity.equals(EntityType.ZOMBIE)) {
+
 
             FileConfiguration config = plugin.getConfig();
             String killerNamePath = "Players." + killer.getUniqueId() + ".name";
@@ -98,7 +100,5 @@ public class Kills implements Listener {
             }
 
         }
-
-    }
 
 }
