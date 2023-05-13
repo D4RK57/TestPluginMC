@@ -3,7 +3,7 @@ package mrdark57_.testpluginmc;
 import mrdark57_.testpluginmc.commands.Kit;
 import mrdark57_.testpluginmc.commands.TestPluginCommand;
 import mrdark57_.testpluginmc.events.PlayerJoin;
-import mrdark57_.testpluginmc.events.ZombieKills;
+import mrdark57_.testpluginmc.events.Kills;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -56,7 +56,7 @@ public class TestPluginMC extends JavaPlugin {
     public void eventRegister() {
         // Registrar evento
         getServer().getPluginManager().registerEvents(new PlayerJoin(this), this);
-        getServer().getPluginManager().registerEvents(new ZombieKills(this), this);
+        getServer().getPluginManager().registerEvents(new Kills(this), this);
     }
 
     // Registrar la config
