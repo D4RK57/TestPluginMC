@@ -25,15 +25,16 @@ public class PlayerJoin implements Listener {
 
         Player player = event.getPlayer();
         FileConfiguration config = plugin.getConfig();
+        FileConfiguration messages = plugin.getMessages();
 
         String welcomeMsgPath = "Config.welcome-msg";
 
 
         if (config.getString(welcomeMsgPath).equals("true")){
 
-            String welcomeMsgTextPath = "Config.welcome-msg-txt";
+            String welcomeMsgTextPath = "Messages.welcome-msg-txt";
             // Ejemplo de como extraer una lista de la config
-            List<String> welcomeMessages = config.getStringList(welcomeMsgTextPath);
+            List<String> welcomeMessages = messages.getStringList(welcomeMsgTextPath);
 
             // Se utiliza el método translateAlternateColorCodes para activar los códigos de colores &
             for (String message: welcomeMessages) {

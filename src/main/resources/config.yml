@@ -1,5 +1,2 @@
 Config:
   welcome-msg: true
-  welcome-msg-txt:
-   - "&aWelcome to the server %player%!"
-   - "&aFollow us in &cInstagram: "

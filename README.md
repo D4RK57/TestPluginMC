@@ -7,3 +7,4 @@ Recursos:
 2. Crear un comando: https://www.spigotmc.org/wiki/create-a-simple-command/
 3. Usar y crear eventos: https://www.spigotmc.org/wiki/using-the-event-api/?noRedirect=1
 4. Crear archivo config: https://www.spigotmc.org/wiki/creating-a-config-file/#wikiPage
+5. Tutoriales en español por Ajneb97: https://www.youtube.com/playlist?list=PLaJSxZW9ZWanvDc4Qrb-qDvaUBSv2LofK

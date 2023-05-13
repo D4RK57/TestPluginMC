@@ -35,9 +35,11 @@ public class TestPluginCommand implements CommandExecutor {
                 if (args[0].equalsIgnoreCase("help")){
                     player.sendMessage(pluginName
                             + " Commands: \n"
-                            + "Use /testplugin version to see the plugin version. \n"
-                            + "Use /testplugin reload to reload the plugin. \n"
-                            + "Use /testplugin kills to know how many zombies are you killed.");
+                            + ChatColor.WHITE
+                            + "- Use " + ChatColor.GOLD + "/testplugin version" + ChatColor.WHITE + "to see the plugin version. \n"
+                            + "- Use " + ChatColor.GOLD + "/testplugin reload" + ChatColor.WHITE + "to reload the plugin. \n"
+                            + "- Use " + ChatColor.GOLD + "/testplugin kills" + ChatColor.WHITE + "to know how many zombies are you killed. \n"
+                            + "- Use " + ChatColor.GOLD + "/testplugin report <player>" + ChatColor.WHITE + "to report a player.");
                     return true;
 
                 }else if (args[0].equalsIgnoreCase("version")){
@@ -46,6 +48,7 @@ public class TestPluginCommand implements CommandExecutor {
 
                 }else if (args[0].equalsIgnoreCase("reload")){
                     plugin.reloadConfig();
+                    plugin.reloadMessages();
                     player.sendMessage(pluginName + " The plugin has been reloaded successfully!");
                     return true;
 

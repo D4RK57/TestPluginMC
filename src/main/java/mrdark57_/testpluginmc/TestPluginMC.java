@@ -6,15 +6,22 @@ import mrdark57_.testpluginmc.events.PlayerJoin;
 import mrdark57_.testpluginmc.events.ZombieKills;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-import java.io.File;
+
+import java.io.*;
 
 public class TestPluginMC extends JavaPlugin {
 
     private String pluginName = ChatColor.YELLOW + "[" + getName() + "]";
     private String pluginVersion ="v" + getDescription().getVersion();
-    private File config = new File(this.getDataFolder(),"config.yml");
+    private File config = new File(getDataFolder(),"config.yml");
     private String configRoute;
+
+    private FileConfiguration messages = null;
+
+    private File messagesFile = null;
 
     @Override
     public void onEnable() {
@@ -22,6 +29,7 @@ public class TestPluginMC extends JavaPlugin {
         commandRegister();
         eventRegister();
         configRegister();
+        messagesRegister();
     }
     @Override
     public void onDisable() {
@@ -40,8 +48,8 @@ public class TestPluginMC extends JavaPlugin {
     // Registrar comandos
     public void commandRegister() {
         // Registrar comando /kit
-        this.getCommand("kit").setExecutor(new Kit());
-        this.getCommand("testplugin").setExecutor(new TestPluginCommand(this));
+        getCommand("kit").setExecutor(new Kit());
+        getCommand("testplugin").setExecutor(new TestPluginCommand(this));
     }
 
     // Registrar eventos
@@ -56,8 +64,52 @@ public class TestPluginMC extends JavaPlugin {
 
         configRoute = config.getPath();
         if (!config.exists()){
-            this.getConfig().options().copyDefaults(true);
+            getConfig().options().copyDefaults(true);
             saveConfig();
+        }
+    }
+
+    // Obtener mensajes
+    public FileConfiguration getMessages() {
+        if (messages == null) {
+            reloadMessages();
+        }
+        return messages;
+    }
+
+    // Recargar mensajes
+    public void reloadMessages() {
+        if (messages == null) {
+            messagesFile = new File(getDataFolder(), "messages.yml");
+        }
+        messages = YamlConfiguration.loadConfiguration(messagesFile);
+        Reader defConfigStream;
+        try {
+            defConfigStream = new InputStreamReader(getResource("messages.yml"), "UTF8");
+            if (defConfigStream != null) {
+                YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
+                messages.setDefaults(defConfig);
+            }
+        }catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Guardar mensajes
+    public void saveMessages(){
+        try {
+            messages.save(messagesFile);
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Registrar mensajes
+    public void messagesRegister(){
+        messagesFile = new File(getDataFolder(), "messages.yml");
+        if (!messagesFile.exists()) {
+            getMessages().options().copyDefaults(true);
+            saveMessages();
         }
     }
 
