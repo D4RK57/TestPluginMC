@@ -1,10 +1,12 @@
 package mrdark57_.testpluginmc.commands;
 
 import mrdark57_.testpluginmc.TestPluginMC;
-import mrdark57_.testpluginmc.events.Inventory;
+import mrdark57_.testpluginmc.events.TestPluginInventory;
 import mrdark57_.testpluginmc.utils.ColorTranslator;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -45,6 +47,10 @@ public class TestPluginCommand implements CommandExecutor {
                         return createVersionCommand(player);
                     case "reload":
                         return createReloadCommand(player);
+                    case "spawn":
+                        return createSpawnCommand(player);
+                    case "setspawn":
+                        return createSetSpawnCommand(player);
                     case "kills":
                         return createKillsCommand(player);
                     case "report":
@@ -55,29 +61,6 @@ public class TestPluginCommand implements CommandExecutor {
                         player.sendMessage(pluginName + ChatColor.RED + " That command does not exist.");
                         return true;
                 }
-
-                /* (args[0].equalsIgnoreCase("help")){
-                    return createHelpCommand(player);
-
-                }else if (args[0].equalsIgnoreCase("version")){
-                    return createVersionCommand(player);
-
-                }else if (args[0].equalsIgnoreCase("reload")){
-                    return createReloadCommand(player);
-
-                }else if (args[0].equalsIgnoreCase("kills")){
-                    return createKillsCommand(player);
-
-                }else if (args[0].equalsIgnoreCase("report")){
-                    return createReportCommand(player, args);
-
-                }else if (args[0].equalsIgnoreCase("inventory")){
-                    return createInventoryCommand(player);
-
-                }else{
-                    player.sendMessage(pluginName + ChatColor.RED + " That command does not exist.");
-                    return true;
-                }*/
 
             }else{
                 player.sendMessage(pluginName + ChatColor.RED + " Use /testplugin help to see the plugin commands.");
@@ -95,6 +78,8 @@ public class TestPluginCommand implements CommandExecutor {
                 + " Commands: \n"
                 + ColorTranslator.translateColors("&f- Use &6/testplugin version &fto see the plugin version. \n")
                 + ColorTranslator.translateColors("&f- Use &6/testplugin reload &fto reload the plugin. \n")
+                + ColorTranslator.translateColors("&f- Use &6/testplugin setspawn &fto set a new spawn point. \n")
+                + ColorTranslator.translateColors("&f- Use &6/testplugin spawn &fto go to the spawn. \n")
                 + ColorTranslator.translateColors("&f- Use &6/testplugin kills &fto know how many zombies are you killed. \n")
                 + ColorTranslator.translateColors("&f- Use &6/testplugin report <player> &fto report a player. \n"));
         return true;
@@ -109,6 +94,54 @@ public class TestPluginCommand implements CommandExecutor {
         plugin.reloadConfig();
         plugin.reloadMessages();
         player.sendMessage(pluginName + " The plugin has been reloaded successfully!");
+        return true;
+    }
+
+    private Boolean createSpawnCommand(Player player) {
+
+        if (config.contains("Config.Spawn.x")){
+            double coordX = Double.parseDouble(config.getString("Config.Spawn.x"));
+            double coordY = Double.parseDouble(config.getString("Config.Spawn.y"));
+            double coordZ= Double.parseDouble(config.getString("Config.Spawn.z"));
+
+            float yaw = Float.parseFloat(config.getString("Config.Spawn.yaw"));
+            float pitch = Float.parseFloat(config.getString("Config.Spawn.pitch"));
+
+            World world = plugin.getServer().getWorld(config.getString("Config.Spawn.world"));
+
+            Location spawn = new Location(world, coordX, coordY, coordZ, yaw, pitch);
+            player.teleport(spawn);
+
+            player.sendMessage(pluginName + ColorTranslator.translateColors(" &bWelcome to the spawn!"));
+            return true;
+        }else {
+            player.sendMessage(pluginName + ColorTranslator.translateColors(" &cThe spawn doesn´t exists!"));
+            return true;
+        }
+
+    }
+
+    private Boolean createSetSpawnCommand(Player player) {
+        Location spawn = player.getLocation();
+
+        double coordX = spawn.getX();
+        double coordY = spawn.getY();
+        double coordZ = spawn.getZ();
+        String world = spawn.getWorld().getName();
+        float yaw = spawn.getYaw();
+        float pitch = spawn.getPitch();
+
+        config.set("Config.Spawn.x", coordX);
+        config.set("Config.Spawn.y", coordY);
+        config.set("Config.Spawn.z", coordZ);
+        config.set("Config.Spawn.world", world);
+        config.set("Config.Spawn.yaw", yaw);
+        config.set("Config.Spawn.pitch", pitch);
+
+        plugin.saveConfig();
+
+        player.sendMessage(pluginName + ColorTranslator.translateColors(" &aYour spawn was designed to &e[" + coordX + ", " + coordY + ", " + coordZ + "]"));
+
         return true;
     }
 
@@ -176,7 +209,7 @@ public class TestPluginCommand implements CommandExecutor {
     }
 
     public Boolean createInventoryCommand(Player player) {
-        Inventory inventory = new Inventory();
+        TestPluginInventory inventory = new TestPluginInventory(plugin);
         inventory.createInventory(player);
         return true;
     }

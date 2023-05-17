@@ -1,7 +1,10 @@
 package mrdark57_.testpluginmc.events;
 
 import mrdark57_.testpluginmc.TestPluginMC;
+import mrdark57_.testpluginmc.utils.ColorTranslator;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -27,6 +30,20 @@ public class PlayerJoin implements Listener {
         FileConfiguration config = plugin.getConfig();
         FileConfiguration messages = plugin.getMessages();
 
+        if (config.contains("Config.Spawn.x")){
+            double coordX = Double.parseDouble(config.getString("Config.Spawn.x"));
+            double coordY = Double.parseDouble(config.getString("Config.Spawn.y"));
+            double coordZ= Double.parseDouble(config.getString("Config.Spawn.z"));
+
+            float yaw = Float.parseFloat(config.getString("Config.Spawn.yaw"));
+            float pitch = Float.parseFloat(config.getString("Config.Spawn.pitch"));
+
+            World world = plugin.getServer().getWorld(config.getString("Config.Spawn.world"));
+
+            Location spawn = new Location(world, coordX, coordY, coordZ, yaw, pitch);
+            player.teleport(spawn);
+        }
+
         String welcomeMsgPath = "Config.welcome-msg";
 
 
@@ -42,6 +59,8 @@ public class PlayerJoin implements Listener {
                         '&', message).replaceAll("%player%", player.getName()));
             }
         }
+
+
 
     }
 

@@ -4,7 +4,7 @@ import org.bukkit.ChatColor;
 
 public class ColorTranslator {
 
-    // Transforma el código de color automáticamente
+    // Transforma el código de color automáticamente.
     public static String translateColors(String text) {
         return ChatColor.translateAlternateColorCodes('&', text);
     }

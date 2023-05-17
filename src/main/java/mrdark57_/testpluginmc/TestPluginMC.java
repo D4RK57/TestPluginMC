@@ -2,6 +2,7 @@ package mrdark57_.testpluginmc;
 
 import mrdark57_.testpluginmc.commands.Kit;
 import mrdark57_.testpluginmc.commands.TestPluginCommand;
+import mrdark57_.testpluginmc.events.TestPluginInventory;
 import mrdark57_.testpluginmc.events.PlayerJoin;
 import mrdark57_.testpluginmc.events.Kills;
 import org.bukkit.Bukkit;
@@ -57,6 +58,7 @@ public class TestPluginMC extends JavaPlugin {
         // Registrar evento
         getServer().getPluginManager().registerEvents(new PlayerJoin(this), this);
         getServer().getPluginManager().registerEvents(new Kills(this), this);
+        getServer().getPluginManager().registerEvents(new TestPluginInventory(this), this);
     }
 
     // Registrar la config

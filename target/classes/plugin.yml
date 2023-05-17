@@ -2,6 +2,7 @@ name: TestPluginMC
 version: 1.1
 author: MrDark57_
 main: mrdark57_.testpluginmc.TestPluginMC
+api-version: 1.19
 commands:
   kit:
     description: Give a kit
