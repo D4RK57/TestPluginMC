@@ -3,15 +3,14 @@ package mrdark57_.testpluginmc.commands;
 import mrdark57_.testpluginmc.TestPluginMC;
 import mrdark57_.testpluginmc.events.TestPluginInventory;
 import mrdark57_.testpluginmc.utils.ColorTranslator;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,20 +99,40 @@ public class TestPluginCommand implements CommandExecutor {
     private Boolean createSpawnCommand(Player player) {
 
         if (config.contains("Config.Spawn.x")){
-            double coordX = Double.parseDouble(config.getString("Config.Spawn.x"));
-            double coordY = Double.parseDouble(config.getString("Config.Spawn.y"));
-            double coordZ= Double.parseDouble(config.getString("Config.Spawn.z"));
 
-            float yaw = Float.parseFloat(config.getString("Config.Spawn.yaw"));
-            float pitch = Float.parseFloat(config.getString("Config.Spawn.pitch"));
+            ItemStack[] playerItems = player.getInventory().getContents();
+            for (ItemStack item : playerItems) {
 
-            World world = plugin.getServer().getWorld(config.getString("Config.Spawn.world"));
+                // Es null cuando no hay un item en el slot
+                // Va a buscar un diamante que tenga aspecto igneo II
+                if (item != null
+                        && item.hasItemMeta()
+                        && item.getItemMeta().hasEnchant(Enchantment.FIRE_ASPECT)
+                        && item.getEnchantmentLevel(Enchantment.FIRE_ASPECT) == 2
+                        && item.getType() == Material.DIAMOND) {
 
-            Location spawn = new Location(world, coordX, coordY, coordZ, yaw, pitch);
-            player.teleport(spawn);
+                    double coordX = Double.parseDouble(config.getString("Config.Spawn.x"));
+                    double coordY = Double.parseDouble(config.getString("Config.Spawn.y"));
+                    double coordZ= Double.parseDouble(config.getString("Config.Spawn.z"));
 
-            player.sendMessage(pluginName + ColorTranslator.translateColors(" &bWelcome to the spawn!"));
+                    float yaw = Float.parseFloat(config.getString("Config.Spawn.yaw"));
+                    float pitch = Float.parseFloat(config.getString("Config.Spawn.pitch"));
+
+                    World world = plugin.getServer().getWorld(config.getString("Config.Spawn.world"));
+
+                    Location spawn = new Location(world, coordX, coordY, coordZ, yaw, pitch);
+                    player.teleport(spawn);
+
+                    player.sendMessage(pluginName + ColorTranslator.translateColors(" &bWelcome to the spawn!"));
+                    return true;
+
+                }
+
+            }
+
+            player.sendMessage(pluginName + ColorTranslator.translateColors(" &cYou don´t have the item to use this command!"));
             return true;
+
         }else {
             player.sendMessage(pluginName + ColorTranslator.translateColors(" &cThe spawn doesn´t exists!"));
             return true;
