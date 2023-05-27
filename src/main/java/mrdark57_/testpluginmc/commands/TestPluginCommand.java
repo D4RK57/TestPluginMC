@@ -11,6 +11,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,14 +22,12 @@ public class TestPluginCommand implements CommandExecutor {
 
     private String pluginName;
     private String pluginVersion;
-    private FileConfiguration config;
 
 
     public TestPluginCommand(TestPluginMC plugin) {
         this.plugin = plugin;
         this.pluginName = plugin.getPluginName();
         this.pluginVersion = plugin.getPluginVersion();
-        this.config = plugin.getConfig();
     }
 
     @Override
@@ -75,12 +74,12 @@ public class TestPluginCommand implements CommandExecutor {
     public Boolean createHelpCommand(Player player) {
         player.sendMessage(pluginName
                 + " Commands: \n"
-                + ColorTranslator.translateColors("&f- Use &6/testplugin version &fto see the plugin version. \n")
-                + ColorTranslator.translateColors("&f- Use &6/testplugin reload &fto reload the plugin. \n")
-                + ColorTranslator.translateColors("&f- Use &6/testplugin setspawn &fto set a new spawn point. \n")
-                + ColorTranslator.translateColors("&f- Use &6/testplugin spawn &fto go to the spawn. \n")
-                + ColorTranslator.translateColors("&f- Use &6/testplugin kills &fto know how many zombies are you killed. \n")
-                + ColorTranslator.translateColors("&f- Use &6/testplugin report <player> &fto report a player. \n"));
+                + ColorTranslator.translate("&f- Use &6/testplugin version &fto see the plugin version. \n")
+                + ColorTranslator.translate("&f- Use &6/testplugin reload &fto reload the plugin. \n")
+                + ColorTranslator.translate("&f- Use &6/testplugin setspawn &fto set a new spawn point. \n")
+                + ColorTranslator.translate("&f- Use &6/testplugin spawn &fto go to the spawn. \n")
+                + ColorTranslator.translate("&f- Use &6/testplugin kills &fto know how many zombies are you killed. \n")
+                + ColorTranslator.translate("&f- Use &6/testplugin report <player> &fto report a player. \n"));
         return true;
     }
 
@@ -92,25 +91,62 @@ public class TestPluginCommand implements CommandExecutor {
     public Boolean createReloadCommand(Player player) {
         plugin.reloadConfig();
         plugin.reloadMessages();
+
         player.sendMessage(pluginName + " The plugin has been reloaded successfully!");
         return true;
     }
 
     private Boolean createSpawnCommand(Player player) {
+        // Es importante tener una instancia de config en cada método, si no no toma los datos recargados de la config.
+        FileConfiguration config = plugin.getConfig();
 
         if (config.contains("Config.Spawn.x")){
 
+            String materialName = config.getString("Config.required-item.material").toUpperCase();
+            Material material = Material.valueOf(materialName);
+            int itemAmount = Integer.parseInt(config.getString("Config.required-item.amount"));
+
+            ItemStack spawnItem = new ItemStack(material, itemAmount);
+            ItemMeta spawnItemMeta = spawnItem.getItemMeta();
+
+            String itemNamePath = "Config.required-item.name";
+            String itemName = "";
+            if (config.contains(itemNamePath)) {
+                itemName = ColorTranslator.translate(config.getString(itemNamePath));
+                spawnItemMeta.setDisplayName(itemName);
+            }
+
+            String itemLorePath = "Config.required-item.lore";
+            List<String> itemLore = new ArrayList<>();
+            if (config.contains(itemLorePath)) {
+                itemLore = config.getStringList(itemLorePath);
+                for (int i = 0; i < itemLore.size(); i++) {
+                    itemLore.set(i, ColorTranslator.translate(itemLore.get(i)));
+                }
+                spawnItemMeta.setLore(itemLore);
+            }
+
+            String itemEnchantsPath = "Config.required-item.enchants";
+            List<String> itemEnchants = new ArrayList<>();
+            if (config.contains(itemEnchantsPath)) {
+                itemEnchants = config.getStringList(itemEnchantsPath);
+                for (int i = 0; i < itemEnchants.size(); i++) {
+                    String[] distinction = new String[2];
+                    distinction = itemEnchants.get(i).split(":");
+                    int level = Integer.parseInt(distinction[1]);
+                    spawnItemMeta.addEnchant(Enchantment.getByName(distinction[0]), level, true);
+                }
+            }
+
+            spawnItem.setItemMeta(spawnItemMeta);
+
+            player.getInventory().addItem(spawnItem);
+
             ItemStack[] playerItems = player.getInventory().getContents();
             for (ItemStack item : playerItems) {
-
-                // Es null cuando no hay un item en el slot
-                // Va a buscar un diamante que tenga aspecto igneo II
                 if (item != null
-                        && item.hasItemMeta()
-                        && item.getItemMeta().hasEnchant(Enchantment.FIRE_ASPECT)
-                        && item.getEnchantmentLevel(Enchantment.FIRE_ASPECT) == 2
-                        && item.getType() == Material.DIAMOND) {
-
+                        && item.isSimilar(spawnItem)
+                        && item.getAmount() == spawnItem.getAmount()) {
                     double coordX = Double.parseDouble(config.getString("Config.Spawn.x"));
                     double coordY = Double.parseDouble(config.getString("Config.Spawn.y"));
                     double coordZ= Double.parseDouble(config.getString("Config.Spawn.z"));
@@ -123,24 +159,25 @@ public class TestPluginCommand implements CommandExecutor {
                     Location spawn = new Location(world, coordX, coordY, coordZ, yaw, pitch);
                     player.teleport(spawn);
 
-                    player.sendMessage(pluginName + ColorTranslator.translateColors(" &bWelcome to the spawn!"));
+                    player.sendMessage(pluginName + ColorTranslator.translate(" &bWelcome to the spawn!"));
                     return true;
-
                 }
-
             }
 
-            player.sendMessage(pluginName + ColorTranslator.translateColors(" &cYou don´t have the item to use this command!"));
+            player.sendMessage(pluginName + ColorTranslator.translate(" &cYou don´t have the item to use this command!"));
             return true;
 
         }else {
-            player.sendMessage(pluginName + ColorTranslator.translateColors(" &cThe spawn doesn´t exists!"));
+            player.sendMessage(pluginName + ColorTranslator.translate(" &cThe spawn doesn´t exists!"));
             return true;
         }
 
     }
 
     private Boolean createSetSpawnCommand(Player player) {
+
+        FileConfiguration config = plugin.getConfig();
+
         Location spawn = player.getLocation();
 
         double coordX = spawn.getX();
@@ -159,12 +196,15 @@ public class TestPluginCommand implements CommandExecutor {
 
         plugin.saveConfig();
 
-        player.sendMessage(pluginName + ColorTranslator.translateColors(" &aYour spawn was designed to &e[" + coordX + ", " + coordY + ", " + coordZ + "]"));
+        player.sendMessage(pluginName + ColorTranslator.translate(" &aYour spawn was designed to &e[" + coordX + ", " + coordY + ", " + coordZ + "]"));
 
         return true;
     }
 
     public Boolean createKillsCommand(Player player) {
+
+        FileConfiguration config = plugin.getConfig();
+
         String zombieKillsNumberPath = "Players." + player.getUniqueId() + ".zombieKills";
 
         if (!config.contains("Players")){
@@ -185,6 +225,7 @@ public class TestPluginCommand implements CommandExecutor {
     }
 
     public Boolean createReportCommand(Player player, String[] args) {
+        FileConfiguration config = plugin.getConfig();
         //testplugin report [usuario]
         // Ejemplo para añadir una lista de usuarios a la config
         if (args.length == 1){

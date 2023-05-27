@@ -1,2 +1,12 @@
 Config:
   welcome-msg: true
+  required-item:
+    material: DIAMOND
+    name: "&6Spawn Diamond"
+    amount: 1
+    lore:
+      - "&cCosa 1"
+      - "&2Cosa 2"
+    enchants:
+      - FIRE_ASPECT:2
+      - DAMAGE_ALL:2

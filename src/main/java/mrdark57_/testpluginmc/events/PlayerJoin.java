@@ -1,7 +1,6 @@
 package mrdark57_.testpluginmc.events;
 
 import mrdark57_.testpluginmc.TestPluginMC;
-import mrdark57_.testpluginmc.utils.ColorTranslator;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;

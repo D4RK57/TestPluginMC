@@ -46,16 +46,16 @@ public class Kills implements Listener {
             ItemStack gem = new ItemStack(Material.EMERALD,1);
             ItemMeta gemMeta = gem.getItemMeta(); // Para modificar las propiedades del item
 
-            gemMeta.setDisplayName(ColorTranslator.translateColors("&2&lGem"));
+            gemMeta.setDisplayName(ColorTranslator.translate("&2&lGem"));
 
             List<String> gemLore = new ArrayList<String>();
-            gemLore.add(ColorTranslator.translateColors("&4&m                                          "));
+            gemLore.add(ColorTranslator.translate("&4&m                                          "));
             gemLore.add("");
-            gemLore.add(ColorTranslator.translateColors("&7You receive this gem for you big strength."));
-            gemLore.add(ColorTranslator.translateColors("&7You can buy items with this."));
-            gemLore.add(ColorTranslator.translateColors("&c&lPrice: &2$5000"));
+            gemLore.add(ColorTranslator.translate("&7You receive this gem for you big strength."));
+            gemLore.add(ColorTranslator.translate("&7You can buy items with this."));
+            gemLore.add(ColorTranslator.translate("&c&lPrice: &2$5000"));
             gemLore.add("");
-            gemLore.add(ColorTranslator.translateColors("&4&m                                          "));
+            gemLore.add(ColorTranslator.translate("&4&m                                          "));
             gemMeta.setLore(gemLore);
 
             gemMeta.addEnchant(Enchantment.DAMAGE_ALL, 10, true);

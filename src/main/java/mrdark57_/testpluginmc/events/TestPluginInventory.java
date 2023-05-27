@@ -27,7 +27,7 @@ public class TestPluginInventory implements Listener {
 
     @EventHandler
     public void clickInventory(InventoryClickEvent event){
-        String inventoryName = ColorTranslator.translateColors("&2TestPluginMC Inventory");
+        String inventoryName = ColorTranslator.translate("&2TestPluginMC Inventory");
         String inventoryNameWithoutColors = ChatColor.stripColor(inventoryName);
 
         if (ChatColor.stripColor(event.getView().getTitle()).equals(inventoryNameWithoutColors)) {
@@ -49,7 +49,7 @@ public class TestPluginInventory implements Listener {
                         player.closeInventory();
                         player.teleport(location);
                         player.sendMessage(plugin.getPluginName() +
-                                ColorTranslator.translateColors(" &aYou has been teleported to a mysterious place!"));
+                                ColorTranslator.translate(" &aYou has been teleported to a mysterious place!"));
                         
                     } else if (event.getSlot() == 22) {
                         // Dar un diamante al jugador si tiene permisos
@@ -57,14 +57,14 @@ public class TestPluginInventory implements Listener {
                             ItemStack diamond = new ItemStack(Material.DIAMOND, 1);
                             player.getInventory().addItem(diamond);
                             player.sendMessage(plugin.getPluginName() +
-                                    ColorTranslator.translateColors(" &bEnjoy your diamond!"));
+                                    ColorTranslator.translate(" &bEnjoy your diamond!"));
                         }else {
-                            player.sendMessage(ColorTranslator.translateColors(plugin.getPluginName() + " &4You don´t have permissions to use this command."));
+                            player.sendMessage(ColorTranslator.translate(plugin.getPluginName() + " &4You don´t have permissions to use this command."));
                         }
                         
                     } else if (event.getSlot() == 24) {
                         Inventory inventory2 = Bukkit.createInventory(
-                                null, 9, ColorTranslator.translateColors("&7&lNothing XD"));
+                                null, 9, ColorTranslator.translate("&7&lNothing XD"));
                         player.openInventory(inventory2);
                     }else {
                         event.setCancelled(true);
@@ -79,7 +79,7 @@ public class TestPluginInventory implements Listener {
     public void createInventory(Player player) {
         // El tamaño debe ser un número divisible por 9
         Inventory inventory = Bukkit.createInventory(
-                null, 45, ColorTranslator.translateColors("&2TestPluginMC Inventory"));
+                null, 45, ColorTranslator.translate("&2TestPluginMC Inventory"));
 
         // Crear item que hace tp
         createTpItem(inventory);
@@ -101,10 +101,10 @@ public class TestPluginInventory implements Listener {
         ItemStack tpItem = new ItemStack(Material.REDSTONE_BLOCK, 1);
         ItemMeta tpItemMeta = tpItem.getItemMeta();
 
-        tpItemMeta.setDisplayName(ColorTranslator.translateColors("&4&lTeleporter"));
+        tpItemMeta.setDisplayName(ColorTranslator.translate("&4&lTeleporter"));
 
         List<String> tpItemLore = new ArrayList<>();
-        tpItemLore.add(ColorTranslator.translateColors("&7Teleports you to a mysterious place."));
+        tpItemLore.add(ColorTranslator.translate("&7Teleports you to a mysterious place."));
         tpItemMeta.setLore(tpItemLore);
 
         tpItem.setItemMeta(tpItemMeta);
@@ -116,10 +116,10 @@ public class TestPluginInventory implements Listener {
         ItemStack diamond = new ItemStack(Material.DIAMOND, 1);
         ItemMeta diamondMeta = diamond.getItemMeta();
 
-        diamondMeta.setDisplayName(ColorTranslator.translateColors("&b&lFREE DIAMONDS!"));
+        diamondMeta.setDisplayName(ColorTranslator.translate("&b&lFREE DIAMONDS!"));
 
         List<String> diamondLore = new ArrayList<>();
-        diamondLore.add(ColorTranslator.translateColors("&7Gives you a diamond if you have permissions."));
+        diamondLore.add(ColorTranslator.translate("&7Gives you a diamond if you have permissions."));
         diamondMeta.setLore(diamondLore);
 
         diamond.setItemMeta(diamondMeta);
@@ -131,10 +131,10 @@ public class TestPluginInventory implements Listener {
         ItemStack otherInventory = new ItemStack(Material.CHEST, 1);
         ItemMeta otherInventoryMeta = otherInventory.getItemMeta();
 
-        otherInventoryMeta.setDisplayName(ColorTranslator.translateColors("&c&lInventory 2"));
+        otherInventoryMeta.setDisplayName(ColorTranslator.translate("&c&lInventory 2"));
 
         List<String> otherInventoryLore = new ArrayList<>();
-        otherInventoryLore.add(ColorTranslator.translateColors("&7Open other inventory."));
+        otherInventoryLore.add(ColorTranslator.translate("&7Open other inventory."));
         otherInventoryMeta.setLore(otherInventoryLore);
 
         otherInventory.setItemMeta(otherInventoryMeta);
