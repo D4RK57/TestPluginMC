@@ -2,6 +2,7 @@ package mrdark57_.testpluginmc;
 
 import mrdark57_.testpluginmc.commands.Kit;
 import mrdark57_.testpluginmc.commands.TestPluginCommand;
+import mrdark57_.testpluginmc.events.Chat;
 import mrdark57_.testpluginmc.events.TestPluginInventory;
 import mrdark57_.testpluginmc.events.PlayerJoin;
 import mrdark57_.testpluginmc.events.Kills;
@@ -9,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
@@ -56,9 +58,13 @@ public class TestPluginMC extends JavaPlugin {
     // Registrar eventos
     public void eventRegister() {
         // Registrar evento
-        getServer().getPluginManager().registerEvents(new PlayerJoin(this), this);
-        getServer().getPluginManager().registerEvents(new Kills(this), this);
-        getServer().getPluginManager().registerEvents(new TestPluginInventory(this), this);
+        PluginManager pluginManager = getServer().getPluginManager();
+
+        pluginManager.registerEvents(new PlayerJoin(this), this);
+        pluginManager.registerEvents(new Kills(this), this);
+        pluginManager.registerEvents(new TestPluginInventory(this), this);
+        pluginManager.registerEvents(new TestPluginInventory(this), this);
+        pluginManager.registerEvents(new Chat(this), this);
     }
 
     // Registrar la config

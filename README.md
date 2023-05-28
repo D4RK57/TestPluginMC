@@ -12,4 +12,4 @@ Recursos:
 7. Recursos de usuarios en foro de Spigot: https://www.spigotmc.org/wiki/resources-list/
 8. Códigos de colores: https://www.spigotmc.org/resources/colorcodes.32415/
 9. Inventarios: https://wiki.vg/Inventory
-
+10. Símbolos: https://www.fileformat.info/info/unicode/category/So/list.htm
