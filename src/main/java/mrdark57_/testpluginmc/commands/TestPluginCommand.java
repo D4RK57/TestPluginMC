@@ -100,81 +100,103 @@ public class TestPluginCommand implements CommandExecutor {
         // Es importante tener una instancia de config en cada método, si no no toma los datos recargados de la config.
         FileConfiguration config = plugin.getConfig();
 
-        if (config.contains("Config.Spawn.x")){
+        if (config.contains("Config.Spawn.x") && config.contains("Config.Spawn.y") && config.contains("Config.Spawn.z")){
 
-            String materialName = config.getString("Config.required-item.material").toUpperCase();
-            Material material = Material.valueOf(materialName);
-            int itemAmount = Integer.parseInt(config.getString("Config.required-item.amount"));
-
-            ItemStack spawnItem = new ItemStack(material, itemAmount);
-            ItemMeta spawnItemMeta = spawnItem.getItemMeta();
-
-            String itemNamePath = "Config.required-item.name";
-            String itemName = "";
-            if (config.contains(itemNamePath)) {
-                itemName = ColorTranslator.translate(config.getString(itemNamePath));
-                spawnItemMeta.setDisplayName(itemName);
-            }
-
-            String itemLorePath = "Config.required-item.lore";
-            List<String> itemLore = new ArrayList<>();
-            if (config.contains(itemLorePath)) {
-                itemLore = config.getStringList(itemLorePath);
-                for (int i = 0; i < itemLore.size(); i++) {
-                    itemLore.set(i, ColorTranslator.translate(itemLore.get(i)));
-                }
-                spawnItemMeta.setLore(itemLore);
-            }
-
-            String itemEnchantsPath = "Config.required-item.enchants";
-            List<String> itemEnchants = new ArrayList<>();
-            if (config.contains(itemEnchantsPath)) {
-                itemEnchants = config.getStringList(itemEnchantsPath);
-                for (int i = 0; i < itemEnchants.size(); i++) {
-                    String[] distinction = new String[2];
-                    distinction = itemEnchants.get(i).split(":");
-                    int level = Integer.parseInt(distinction[1]);
-                    spawnItemMeta.addEnchant(Enchantment.getByName(distinction[0]), level, true);
-                }
-            }
-
-            spawnItem.setItemMeta(spawnItemMeta);
+            ItemStack spawnItem = createSpawnItem();
 
             player.getInventory().addItem(spawnItem);
 
-            ItemStack[] playerItems = player.getInventory().getContents();
-            for (ItemStack item : playerItems) {
-                if (item != null
-                        && item.isSimilar(spawnItem)
-                        && item.getAmount() == spawnItem.getAmount()) {
-                    double coordX = Double.parseDouble(config.getString("Config.Spawn.x"));
-                    double coordY = Double.parseDouble(config.getString("Config.Spawn.y"));
-                    double coordZ= Double.parseDouble(config.getString("Config.Spawn.z"));
-
-                    float yaw = Float.parseFloat(config.getString("Config.Spawn.yaw"));
-                    float pitch = Float.parseFloat(config.getString("Config.Spawn.pitch"));
-
-                    World world = plugin.getServer().getWorld(config.getString("Config.Spawn.world"));
-
-                    Location spawn = new Location(world, coordX, coordY, coordZ, yaw, pitch);
-                    player.teleport(spawn);
-
-                    player.sendMessage(pluginName + ColorTranslator.translate(" &bWelcome to the spawn!"));
-                    return true;
-                }
-            }
-
-            player.sendMessage(pluginName + ColorTranslator.translate(" &cYou don´t have the item to use this command!"));
-            return true;
+            tpPlayerToSpawn(player, spawnItem);
 
         }else {
             player.sendMessage(pluginName + ColorTranslator.translate(" &cThe spawn doesn´t exists!"));
             return true;
         }
-
+        return true;
     }
 
-    private Boolean createSetSpawnCommand(Player player) {
+    public ItemStack createSpawnItem(){
+        FileConfiguration config = plugin.getConfig();
+
+        String materialName = config.getString("Config.required-item.material").toUpperCase();
+        Material material = Material.valueOf(materialName);
+        int itemAmount = Integer.parseInt(config.getString("Config.required-item.amount"));
+
+        ItemStack spawnItem = new ItemStack(material, itemAmount);
+        ItemMeta spawnItemMeta = spawnItem.getItemMeta();
+
+        String itemNamePath = "Config.required-item.name";
+        if (config.contains(itemNamePath)) {
+            String itemName = ColorTranslator.translate(config.getString(itemNamePath));
+            spawnItemMeta.setDisplayName(itemName);
+        }
+
+        String itemLorePath = "Config.required-item.lore";
+        if (config.contains(itemLorePath)) {
+            List<String> itemLore = config.getStringList(itemLorePath);
+            for (int i = 0; i < itemLore.size(); i++) {
+                itemLore.set(i, ColorTranslator.translate(itemLore.get(i)));
+            }
+            spawnItemMeta.setLore(itemLore);
+        }
+
+        String itemEnchantsPath = "Config.required-item.enchants";
+        if (config.contains(itemEnchantsPath)) {
+            List<String> itemEnchants = config.getStringList(itemEnchantsPath);
+            for (int i = 0; i < itemEnchants.size(); i++) {
+                String[] distinction = itemEnchants.get(i).split(":");
+                int level = Integer.parseInt(distinction[1]);
+                // El método getByName() está obsoleto, pero el método getByKey() usa nombres distintos a los enums de
+                // encantamientos, como por ejemplo, "damage_all" es "sharpness".
+                // Una solución es crear un método que transforme los nombres, pero debe existir algo más eficiente
+                // que aún no he encontrado.
+                spawnItemMeta.addEnchant(Enchantment.getByName(distinction[0]), level, true);
+            }
+        }
+        spawnItem.setItemMeta(spawnItemMeta);
+
+        return spawnItem;
+    }
+
+    public Boolean tpPlayerToSpawn(Player player, ItemStack spawnItem){
+        FileConfiguration config = plugin.getConfig();
+        ItemStack[] playerItems = player.getInventory().getContents();
+
+        for (ItemStack item : playerItems) {
+            if (item != null
+                    && item.isSimilar(spawnItem)
+                    && item.getAmount() == spawnItem.getAmount()) {
+
+                double coordX = Double.parseDouble(config.getString("Config.Spawn.x"));
+                double coordY = Double.parseDouble(config.getString("Config.Spawn.y"));
+                double coordZ= Double.parseDouble(config.getString("Config.Spawn.z"));
+
+                World world = plugin.getServer().getWorld(config.getString("Config.Spawn.world"));
+
+                if (!config.contains("Config.Spawn.yaw") || !config.contains("Config.Spawn.pitch")) {
+                    Location spawn = new Location(world, coordX, coordY, coordZ);
+                    player.teleport(spawn);
+
+                    player.sendMessage(pluginName + ColorTranslator.translate(" &bWelcome to the spawn!"));
+                    return true;
+                }
+
+                float yaw = Float.parseFloat(config.getString("Config.Spawn.yaw"));
+                float pitch = Float.parseFloat(config.getString("Config.Spawn.pitch"));
+
+                Location spawn = new Location(world, coordX, coordY, coordZ, yaw, pitch);
+                player.teleport(spawn);
+
+                player.sendMessage(pluginName + ColorTranslator.translate(" &bWelcome to the spawn!"));
+                return true;
+            }
+            player.sendMessage(pluginName + ColorTranslator.translate(" &cYou don´t have the item to use this command!"));
+            return true;
+        }
+        return true;
+    }
+
+    public Boolean createSetSpawnCommand(Player player) {
 
         FileConfiguration config = plugin.getConfig();
 

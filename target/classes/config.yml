@@ -1,3 +1,5 @@
+# Para poner un objeto sin un atributo, ponerlo vacío.
+# Por ejemplo, enchants: [], lore: [], name: ''
 Config:
   welcome-msg: true
   required-item:
