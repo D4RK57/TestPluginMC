@@ -26,55 +26,43 @@ public class TestPluginInventory implements Listener {
     }
 
     @EventHandler
-    public void clickInventory(InventoryClickEvent event){
+    public void clickInventory(InventoryClickEvent event) {
         String inventoryName = ColorTranslator.translate("&2TestPluginMC Inventory");
         String inventoryNameWithoutColors = ChatColor.stripColor(inventoryName);
 
         if (ChatColor.stripColor(event.getView().getTitle()).equals(inventoryNameWithoutColors)) {
+            event.setCancelled(true); // Cancelar todas las acciones de clic en el inventario
 
-            // Si hace click en su propio inventario o
-            // Si se clickea fuera del inventario o
-            // Si el item seleccionado es aire, el evento se cancela
-            if (event.getCurrentItem() == null || event.getSlotType() == null || event.getCurrentItem().getType().equals(Material.AIR)) {
-                event.setCancelled(true);
+            if (event.getCurrentItem() != null && event.getCurrentItem().getType() != Material.AIR && event.getCurrentItem().hasItemMeta()) {
+                Player player = (Player) event.getWhoClicked();
+                int clickedSlot = event.getRawSlot();
 
-            }else {
-                if (event.getCurrentItem().hasItemMeta()) {
-                    event.setCancelled(true);
-                    Player player = (Player) event.getWhoClicked();
+                if (clickedSlot == 20 && !event.isShiftClick()) {
+                    // Teletransportar a un lugar "misterioso"
+                    Location location = new Location(player.getWorld(), 200, 70, -200, 0, 0);
+                    player.closeInventory();
+                    player.teleport(location);
+                    player.sendMessage(plugin.getPluginName() + ColorTranslator.translate(" &aYou have been teleported to a mysterious place!"));
 
-                    if (event.getSlot() == 20) {
-                        // Tp a lugar "misterioso"
-                        Location location = new Location(player.getWorld(), 200, 70, -200, 0, 0);
-                        player.closeInventory();
-                        player.teleport(location);
-                        player.sendMessage(plugin.getPluginName() +
-                                ColorTranslator.translate(" &aYou has been teleported to a mysterious place!"));
-                        
-                    } else if (event.getSlot() == 22) {
-                        // Dar un diamante al jugador si tiene permisos
-                        if (player.hasPermission("testplugin.inventory.diamond")){
-                            ItemStack diamond = new ItemStack(Material.DIAMOND, 1);
-                            player.getInventory().addItem(diamond);
-                            player.sendMessage(plugin.getPluginName() +
-                                    ColorTranslator.translate(" &bEnjoy your diamond!"));
-                        }else {
-                            player.sendMessage(ColorTranslator.translate(plugin.getPluginName() + " &4You don´t have permissions to use this command."));
-                        }
-                        
-                    } else if (event.getSlot() == 24) {
-                        Inventory inventory2 = Bukkit.createInventory(
-                                null, 9, ColorTranslator.translate("&7&lNothing XD"));
-                        player.openInventory(inventory2);
-                    }else {
-                        event.setCancelled(true);
+                } else if (clickedSlot == 22) {
+                    // Dar un diamante al jugador si tiene permisos
+                    if (player.hasPermission("testplugin.inventory.diamond")) {
+                        ItemStack diamond = new ItemStack(Material.DIAMOND, 1);
+                        player.getInventory().addItem(diamond);
+                        player.sendMessage(plugin.getPluginName() + ColorTranslator.translate(" &bEnjoy your diamond!"));
+                    } else {
+                        player.sendMessage(ColorTranslator.translate(plugin.getPluginName() + " &4You don't have permission to use this command."));
                     }
 
+                } else if (clickedSlot == 24) {
+                    // Abrir otro inventario
+                    Inventory inventory2 = Bukkit.createInventory(null, 9, ColorTranslator.translate("&7&lNothing XD"));
+                    player.openInventory(inventory2);
                 }
             }
         }
-
     }
+
 
     public void createInventory(Player player) {
         // El tamaño debe ser un número divisible por 9
