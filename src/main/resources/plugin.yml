@@ -3,6 +3,7 @@ version: 1.1
 author: MrDark57_
 main: mrdark57_.testpluginmc.TestPluginMC
 api-version: 1.19
+softdepend: [Vault]
 commands:
   kit:
     description: Give a kit

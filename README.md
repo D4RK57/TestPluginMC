@@ -13,3 +13,5 @@ Recursos:
 8. Códigos de colores: https://www.spigotmc.org/resources/colorcodes.32415/
 9. Inventarios: https://wiki.vg/Inventory
 10. Símbolos: https://www.fileformat.info/info/unicode/category/So/list.htm
+11. Link Descarga Vault: https://www.spigotmc.org/resources/vault.34315/
+12. Dependencias: https://github.com/MilkBowl/VaultAPI

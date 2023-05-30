@@ -6,11 +6,14 @@ import mrdark57_.testpluginmc.events.Chat;
 import mrdark57_.testpluginmc.events.TestPluginInventory;
 import mrdark57_.testpluginmc.events.PlayerJoin;
 import mrdark57_.testpluginmc.events.Kills;
+import mrdark57_.testpluginmc.utils.ColorTranslator;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
@@ -25,6 +28,8 @@ public class TestPluginMC extends JavaPlugin {
     private FileConfiguration messages = null;
 
     private File messagesFile = null;
+
+    private static Economy economy = null;
 
     @Override
     public void onEnable() {
@@ -44,7 +49,12 @@ public class TestPluginMC extends JavaPlugin {
     // Enviar mensaje cuando se inicia el plugin
     public void enableMessage() {
         Bukkit.getConsoleSender().sendMessage(ChatColor.YELLOW + "----------------------------------------");
-        Bukkit.getConsoleSender().sendMessage(pluginName + ChatColor.AQUA + " has been enabled" + ChatColor.RED +  " (" + pluginVersion + ")");
+        Bukkit.getConsoleSender().sendMessage(ColorTranslator.translate(pluginName + " &3has been enabled &c(" + pluginVersion + ")"));
+        if (setupEconomy()) {
+            Bukkit.getConsoleSender().sendMessage(ColorTranslator.translate("&aVault plugin has been found"));
+        }else {
+            Bukkit.getConsoleSender().sendMessage(ColorTranslator.translate("&4Vault plugin not found"));
+        }
         Bukkit.getConsoleSender().sendMessage(ChatColor.YELLOW + "----------------------------------------" + "\n");
     }
 
@@ -121,11 +131,34 @@ public class TestPluginMC extends JavaPlugin {
         }
     }
 
+    // Registrar economía (Vault)
+    public boolean setupEconomy() {
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            return false;
+        }
+
+        RegisteredServiceProvider<Economy> registeredServiceProvider = getServer()
+                .getServicesManager()
+                .getRegistration(Economy.class);
+
+        if (registeredServiceProvider == null){
+            return false;
+        }
+
+        economy = registeredServiceProvider.getProvider();
+
+        return economy != null;
+    }
+
     public String getPluginName() {
         return pluginName;
     }
 
     public String getPluginVersion() {
         return pluginVersion;
+    }
+
+    public static Economy getEconomy() {
+        return economy;
     }
 }

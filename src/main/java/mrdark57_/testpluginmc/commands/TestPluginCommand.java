@@ -3,6 +3,7 @@ package mrdark57_.testpluginmc.commands;
 import mrdark57_.testpluginmc.TestPluginMC;
 import mrdark57_.testpluginmc.events.TestPluginInventory;
 import mrdark57_.testpluginmc.utils.ColorTranslator;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -55,18 +56,20 @@ public class TestPluginCommand implements CommandExecutor {
                         return createReportCommand(player, args);
                     case "inventory":
                         return createInventoryCommand(player);
+                    case "announce":
+                        return createAnnounceCommand(player, args);
                     default:
-                        player.sendMessage(pluginName + ChatColor.RED + " That command does not exist.");
+                        player.sendMessage(ColorTranslator.translate(pluginName + " &cThat command does not exist."));
                         return true;
                 }
 
             }else{
-                player.sendMessage(pluginName + ChatColor.RED + " Use /testplugin help to see the plugin commands.");
+                player.sendMessage(ColorTranslator.translate(pluginName + " &cUse /testplugin help to see the plugin commands."));
                 return true;
             }
 
         }else {
-            Bukkit.getConsoleSender().sendMessage(pluginName + ChatColor.RED + " You cannot execute this command from the console.");
+            Bukkit.getConsoleSender().sendMessage(ColorTranslator.translate(pluginName + " &cYou cannot execute this command from the console."));
             return false;
         }
     }
@@ -79,7 +82,8 @@ public class TestPluginCommand implements CommandExecutor {
                 + ColorTranslator.translate("&f- Use &6/testplugin setspawn &fto set a new spawn point. \n")
                 + ColorTranslator.translate("&f- Use &6/testplugin spawn &fto go to the spawn. \n")
                 + ColorTranslator.translate("&f- Use &6/testplugin kills &fto know how many zombies are you killed. \n")
-                + ColorTranslator.translate("&f- Use &6/testplugin report <player> &fto report a player. \n"));
+                + ColorTranslator.translate("&f- Use &6/testplugin report <player> &fto report a player. \n")
+                + ColorTranslator.translate("&f- Use &6/testplugin announce <message> &fto publish a announce in the chat. \n"));
         return true;
     }
 
@@ -96,7 +100,7 @@ public class TestPluginCommand implements CommandExecutor {
         return true;
     }
 
-    private Boolean createSpawnCommand(Player player) {
+    public Boolean createSpawnCommand(Player player) {
         // Es importante tener una instancia de config en cada método, si no no toma los datos recargados de la config.
         FileConfiguration config = plugin.getConfig();
 
@@ -109,7 +113,7 @@ public class TestPluginCommand implements CommandExecutor {
             tpPlayerToSpawn(player, spawnItem);
 
         }else {
-            player.sendMessage(pluginName + ColorTranslator.translate(" &cThe spawn doesn´t exists!"));
+            player.sendMessage(ColorTranslator.translate(pluginName + " &cThe spawn doesn´t exists!"));
             return true;
         }
         return true;
@@ -231,16 +235,16 @@ public class TestPluginCommand implements CommandExecutor {
 
         if (!config.contains("Players")){
             // El jugador aún no ha matado zombies
-            player.sendMessage(pluginName + ChatColor.DARK_RED + " You are not killed zombies yet.");
+            player.sendMessage(ColorTranslator.translate(pluginName + " &4You are not killed zombies yet."));
             return true;
         }else if (config.contains(zombieKillsNumberPath)){
             int zombiesKilled = Integer.parseInt(config.getString(zombieKillsNumberPath));
-            player.sendMessage(pluginName + ChatColor.RED + " KILLS:");
-            player.sendMessage(ChatColor.GREEN + "Zombie: " + ChatColor.YELLOW +zombiesKilled);
+            player.sendMessage(ColorTranslator.translate(pluginName + " &4KILLS:"));
+            player.sendMessage(ColorTranslator.translate("&aZombie: &e" + zombiesKilled));
             return true;
         }else {
             // El jugador aún no ha matado zombies
-            player.sendMessage(pluginName + ChatColor.DARK_RED + " You aren´t killed zombies yet.");
+            player.sendMessage(ColorTranslator.translate(pluginName + " &4You aren´t killed zombies yet."));
             return true;
         }
 
@@ -251,7 +255,7 @@ public class TestPluginCommand implements CommandExecutor {
         //testplugin report [usuario]
         // Ejemplo para añadir una lista de usuarios a la config
         if (args.length == 1){
-            player.sendMessage(pluginName + ChatColor.RED + " To report a player use: /testplugin report [user]");
+            player.sendMessage(ColorTranslator.translate(pluginName + " &cTo report a player use: /testplugin report [user]"));
             return true;
 
         }else {
@@ -264,13 +268,13 @@ public class TestPluginCommand implements CommandExecutor {
                     List<String> reportedUsers = config.getStringList(reportedUsersPath);
 
                     if (reportedUsers.contains(user)){
-                        player.sendMessage(pluginName + ChatColor.RED + " " + user + " is already reported!");
+                        player.sendMessage(ColorTranslator.translate(pluginName + " &c" + user + " is already reported!"));
                         return true;
                     }else {
                         reportedUsers.add(user);
                         config.set(reportedUsersPath, reportedUsers);
                         plugin.saveConfig();
-                        player.sendMessage(pluginName + ChatColor.GREEN + " " + user + " has been reported successfully!");
+                        player.sendMessage(ColorTranslator.translate(pluginName + " &a" + user + " has been reported successfully!"));
                         return true;
                     }
 
@@ -279,12 +283,12 @@ public class TestPluginCommand implements CommandExecutor {
                     reportedUsers.add(user);
                     config.set(reportedUsersPath, reportedUsers);
                     plugin.saveConfig();
-                    player.sendMessage(pluginName + ChatColor.GREEN + " " + user + " has been reported successfully!");
+                    player.sendMessage(ColorTranslator.translate(pluginName + " &a" + user + " has been reported successfully!"));
                     return true;
                 }
 
             }else {
-                player.sendMessage(pluginName + ChatColor.RED + " This player is not online.");
+                player.sendMessage(ColorTranslator.translate(pluginName + " &cThis player is not online."));
                 return true;
             }
         }
@@ -294,6 +298,35 @@ public class TestPluginCommand implements CommandExecutor {
         TestPluginInventory inventory = new TestPluginInventory(plugin);
         inventory.createInventory(player);
         return true;
+    }
+
+    public Boolean createAnnounceCommand(Player player, String[] args) {
+        if (args.length == 1){
+            player.sendMessage(ColorTranslator.translate(pluginName + " &cTo announce a message use: /testplugin announce [message]"));
+            return true;
+        }else {
+            Economy economy = plugin.getEconomy();
+            double playerBalance = economy.getBalance(player);
+
+            if (playerBalance >= 1000) {
+                // Sacar dinero al jugador
+                economy.withdrawPlayer(player, 1000);
+                // economy.depositPlayer(jugador, dinero) - Dar dinero
+
+                // Comando: /testplugin announce hola amigos como estan
+                String message = "";
+                for (int i = 1; i < args.length; i++) {
+                    message += args[i] + " ";
+                }
+                player.sendMessage(ColorTranslator.translate(pluginName + " &aYou paid $1000 for the announce!"));
+                plugin.getServer().broadcastMessage(ColorTranslator.translate("&4[ANNOUNCE OF: " + player.getName() + "] &e" + message));
+                return true;
+            }else {
+                player.sendMessage(ColorTranslator.translate(pluginName + " &cYou don´t have enough money ($1000)."));
+                return true;
+            }
+
+        }
     }
 
 }
